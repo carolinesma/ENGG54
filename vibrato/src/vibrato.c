@@ -6,27 +6,28 @@
 #include <math.h>
 #include "vibrato.h"
 
-void vibratoInit(float delay, int lfo, vibrato *t)
+void vibratoInit(unsigned long fs, vibrato *t)
 {
-    t->max_delay = delay;
-    t->var_delay = 0;
-    t->delay_size = 2+round(delay*SF)*(1+2);
-    t->mod     = lfo;
+    t->mod_n = LFO/fs;
+    t->delay = round(DELAY*fs);
+    t->mod = 0;
+    t->delay_size = 2+(t->delay*3);
     t->n       = 1;
 
     unsigned char i = 0;
     for (i = 0; i <= MAX_DELAY_SIZE-1; i++) {
-            t->delayline[i] = 0.0;
+            t->delayline[i] = 0;
         }
 
-    printf( "vibratoInit() at delay [%f] and LFO [%d]\n", t->max_delay, t->mod);
+    printf( "vibratoInit() at delay [%f] and LFO [%f]\n", DELAY, LFO);
 }
 
+#define W (float)(t->mod_n*2*PI)
 void modulation(vibrato *t, int dataIn)
 {
     int i;
 
-    t->var_delay = 1 + (t->max_delay * (1.0 + sin(t->mod*2*PI*t->n)));
+    t->mod = (1.0 + t->delay) + (t->delay*sin(W*t->n));
 
     for (i = t->delay_size-2; i >= 0; i--)
             t->delayline[i] = t->delayline[i - 1];
@@ -39,8 +40,8 @@ int interpolation(vibrato *t) {
     int yOut, i;
     float frac, next;
 
-    i = floor(t->var_delay);
-    frac = t->var_delay - (float)i;
+    i = floor(t->mod);
+    frac = t->mod - (float)i;
 
     if (i != t->delay_size-1) {
         next = t->delayline[i+1];

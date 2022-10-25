@@ -17,22 +17,16 @@ void main()
 {
     FILE *fpIn,*fpOut;
     unsigned long cnt;
-    float delay;
-    int lfo, sample, i, j, yOut;
-
+    int sample, i, j, yOut;
+    unsigned long fs;
 
     printf("Efeito Vibrato\n");
-
-    printf("Entre com o delay em ms (aceita valores entre 5 e 10 ms)\n");
-    scanf ("%lf", &delay);
-    printf("Entre com a frequência de oscilação para o LFO modulador em Hz (aceita valores entre 5 e 14)\n");
-    scanf ("%d", &lfo);
 
     fpIn = fopen("..\\data\\acoustic.wav", "rb");
     fpOut = fopen("..\\data\\acoustic_vibrato.wav", "wb");
 
 
-    if (fpIn == NULL)                            // Check if the input file exists
+    if (fpIn == NULL)
     {
         printf("Failed to open input audio file\n");
         exit(0);
@@ -41,9 +35,10 @@ void main()
     fread(waveHeader, sizeof(unsigned char), 44, fpIn);
     fwrite(waveHeader, sizeof(unsigned char), 44, fpOut);
 
+    fs = waveHeader[24]|(waveHeader[25]<<8)|((long)waveHeader[26]<<16)|((long)waveHeader[27]<<24);
     cnt = 0;
     t = &param;
-    vibratoInit(delay, lfo, t);
+    vibratoInit(fs, t);
 
     while ((fread(&temp, sizeof(char),2*MAX_BUF_SIZE, fpIn)) == 2*MAX_BUF_SIZE ) {
         for (j=0, i=0; i<MAX_BUF_SIZE; i++)
@@ -61,7 +56,7 @@ void main()
         printf("%ld data samples processed\n", cnt);
     }
 
-    wHeader(waveHeader, 8000, 8000, cnt<<1);
+    wHeader(waveHeader, fs, fs, cnt<<1);
     rewind(fpOut);
     fwrite(waveHeader, sizeof(char), 44, fpOut);
 
