@@ -20,10 +20,8 @@ void main()
     int sample, i, j, yOut;
     unsigned long fs;
 
-    printf("Efeito Vibrato\n");
-
     fpIn = fopen("..\\data\\acoustic.wav", "rb");
-    fpOut = fopen("..\\data\\acoustic_vibrato.wav", "wb");
+    fpOut = fopen("..\\data\\vibrato_dsp_float.wav", "wb");
 
 
     if (fpIn == NULL)
@@ -44,8 +42,8 @@ void main()
         for (j=0, i=0; i<MAX_BUF_SIZE; i++)
         {
             sample = (temp[j]&0xFF)|(temp[j+1]<<8);
-            modulation(t, sample);
-            yOut = interpolation(t);
+            up_delayline(t, sample);
+            yOut = linear_interpolation(t);
 
             temp[j++] = yOut&0xFF;
             temp[j++] = (yOut>>8)&0xFF;

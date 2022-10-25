@@ -23,7 +23,7 @@ void vibratoInit(unsigned long fs, vibrato *t)
 }
 
 #define W (float)(t->mod_n*2*PI)
-void modulation(vibrato *t, int dataIn)
+void up_delayline(vibrato *t, int dataIn)
 {
     int i;
 
@@ -36,7 +36,7 @@ void modulation(vibrato *t, int dataIn)
 
 }
 
-int interpolation(vibrato *t) {
+int linear_interpolation(vibrato *t) {
     int yOut, i;
     float frac, next;
 

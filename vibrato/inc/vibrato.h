@@ -22,8 +22,8 @@ typedef struct {
 } vibrato;
 
 void  vibratoInit(unsigned long fs, vibrato *t);
-void modulation(vibrato *t, int dataIn);
-int interpolation(vibrato *t);
+void up_delayline(vibrato *t, int dataIn);
+int linear_interpolation(vibrato *t);
 
 
 #endif /* INC_VIBRATO_H_ */
