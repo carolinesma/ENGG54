@@ -38,11 +38,11 @@ function [y] = vibrato_effect_fixedPoint(x, delay, LFO, FS)
 end
 
 function c = add(a, b)
-    int16_max = 2^15-1;
-    int16_min = -2^15;
+    int16_max = n-1;
+    int16_min = -n;
 
     temp = int32(a)+int32(b);
-    temp = temp/2^15;
+    temp = temp/n;
 
     if (temp > int16_max)
         temp = int16_max;
@@ -55,8 +55,8 @@ function c = add(a, b)
 end
 
 function c = sub(a, b)
-    int16_max = 2^15-1;
-    int16_min = -2^15;
+    int16_max = n-1;
+    int16_min = -n;
 
     temp = int16(a)-int16(b);
 
@@ -71,8 +71,8 @@ function c = sub(a, b)
 end
 
 function c = div(a,b,n)
-    int16_max = 2^15-1;
-    int16_min = -2^15;
+    int16_max = n-1;
+    int16_min = -n;
 
     if ((abs(b) < abs(a) ) || (b == 0))
         if(bitxor(bitand(int16(b), int16(0x8000)),bitand(int16(a),int16(0x8000))))
@@ -91,8 +91,8 @@ function c = div(a,b,n)
 end
 
 function c = mul(a,b,n)
-    int16_max = 2^15-1;
-    int16_min = -2^15;
+    int16_max = n-1;
+    int16_min = -n;
     
     temp = (int32(a)*int32(b));
     temp = temp + int32(0.5);
